@@ -154,6 +154,21 @@ class Hint:      #Added by Kevin.
         else:
             print("No hints available.")
 
+#Arianna added class LimitedHints to maintain the challenge and balance of the game.
+class LimitedHints(Hint): 
+    def __init__(self, game_board, max_hints=3):
+        super().__init__(game_board)
+        self.hints_used = 0
+        self.max_hints = max_hints
+
+    def provide_hint(self):
+        if self.hints_used < self.max_hints:
+            super().provide_hint()
+            self.hints_used += 1
+            print(f"Hints used: {self.hints_used}/{self.max_hints}")
+        else:
+            print("No more hints available.")
+
 class Timer: #Anne added class Timer to keep track of how long a player takes to complete the game.
     def __init__(self):
         self.start_time = 0
