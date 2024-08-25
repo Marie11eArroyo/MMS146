@@ -52,6 +52,7 @@ class MemoryGame:
         self.player_name = player_name
         self.scores_file = "./scores.text"
         self.timer = Timer() #Anne added Timer class
+        self.flipped_rows_cols = [ ] #added by Justine to keep track of row and column numbers of cards that were already matched
 
     def start_game(self):
         self.timer.start() #Anne added this to run Timer class. Begins counting time when player starts.
@@ -61,6 +62,8 @@ class MemoryGame:
         if row==0 or col==0:
             raise ValueError("Ensure that row and columns fit the board size properly.") #introduced by Justine. Row/column values cannot be zero because they are numbered 1 to 6.
             #Anne added an error message after ValueError.
+        if (row, col) in self.flipped_rows_cols: #added by Justine. Now checks whether the selected card has already been flipped or not. If flipped, the move is considered invalid.
+            raise ValueError("Please pick an unmatched card!")
         print(f"Card at ({row}, {col}) : {card.tempreveal()}") #edited by Manuel. Switched it over to Justine's implementation.
         return card
 
@@ -68,7 +71,7 @@ class MemoryGame:
         if first_card.symbol == second_card.symbol:
             first_card.is_matched = True
             second_card.is_matched = True
-            self.matched_pairs.append((first_card, second_card))
+            self.matched_pairs.append((first_card.symbol, second_card.symbol)) #edited by Justine. Now appends the cards' symbols onto the list instead of the objects themselves (thus making the list printable).
             return True
         return False
 
@@ -85,7 +88,7 @@ class MemoryGame:
 
     def display_end_game_message(self):
         elapsed_time = self.timer.elapsed() #Anne added this to show how much time the player took to complete the game>
-        print(f"Congratulations!, {self.player_name} Completed the game in {self.moves_counter} moves.")
+        print(f"Congratulations! {self.player_name} completed the game in {self.moves_counter} moves!") #edited by Justine to fix minor capitalization/punctuation issues.
         self.save_score(self.moves_counter)
 
     def save_score(self, score):
@@ -107,8 +110,8 @@ class MemoryGame:
         while len(self.matched_pairs) < (self.game_board._board_size * self.game_board._board_size) // 2:
             self.update_board()
             # Added by Kevin from adding HintySystem class.
-            hint = input("Would you like a hint? (yes/no): ").strip().lower()
-            if hint == 'yes':
+            hint = input("Would you like a hint? (y/n): ").strip().lower() #edited by Justine to simplify the input required to ask for a hint
+            if hint == 'yes' or hint == 'y': #edited by Justine to simplify the input required to ask for a hint
                 self.hint_system.provide_hint()
 
             try:
@@ -117,10 +120,14 @@ class MemoryGame:
                 row2, col2 = map(int, input("Enter the second card (row col): ").split())	
                 second_card = self.flip_card(row2, col2)
                 self.moves_counter +=1
-                if not self.check_match(first_card, second_card):
+                if row1==row2 and col1==col2: #re-introduced by Justine. Prevents cases where a player picks the same card twice and causes it to match by itself.
+                    print("You chose the same card twice! Try again.")
+                elif not self.check_match(first_card, second_card): #edited by Justine
                     print("No match. Try again.")
                 else:
                     print("Match!")
+                    self.flipped_rows_cols.append((row1, col1)) #added by Justine. Keeps track of row and column combinations that have already been matched successfully.
+                    self.flipped_rows_cols.append((row2, col2)) #added by Justine. Keeps track of row and column combinations that have already been matched successfully.
             except (ValueError, IndexError):
                 print("Invalid input. Please enter valid row and column numbers.")
         self.end_game() #Anne added this to stop counting time as player starts.
@@ -189,12 +196,4 @@ class Timer: #Anne added class Timer to keep track of how long a player takes to
 
 player_name = input("Enter your name: ")
 game = MemoryGame(player_name)
-''' Test with this for base game funct.
 game.play()
-'''
-''' Test with this for save score funct.
-game.display_end_game_message()
-game.display_end_game_message()
-game.display_end_game_message()
-game.display_hall_of_fame()
-'''
