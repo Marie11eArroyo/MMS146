@@ -46,7 +46,7 @@ class GameBoard:
 class MemoryGame:
     def __init__(self, player_name):
         self.game_board = GameBoard()
-        self.hint_system = Hint(self.game_board)              #Added by Kevin. A hint system.
+        self.hint_system = LimitedHints(self.game_board, max_hints=3)              #Added by Kevin. A hint system.	#Arianna added Limited hints to introduce a controlled, more challenging hint system for the players.
         self.moves_counter = 0
         self.matched_pairs = [ ]
         self.player_name = player_name
