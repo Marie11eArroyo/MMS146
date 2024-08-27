@@ -109,6 +109,15 @@ class MemoryGame:
 
         self.dislay_end_game_message()
         self.display_hall_of_fame()
+    def restart_game (self): 
+        self.timer.stop()
+        restart = input ("start new game? (yes/no): ")
+        if restart == 'yes':
+            self.game_board._setup_board()
+            self.start_game()
+            print ("Game has restarted.")
+        elif restart == 'no':
+            self.timer.elapsed()
 
 class Hint:      #Added by Kevin. 
     def __init__(self, game_board):
