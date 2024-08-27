@@ -110,9 +110,10 @@ class MemoryGame:
         while len(self.matched_pairs) < (self.game_board._board_size * self.game_board._board_size) // 2:
             self.update_board()
             # Added by Kevin from adding HintySystem class.
-            hint = input("Would you like a hint? (y/n): ").strip().lower() #edited by Justine to simplify the input required to ask for a hint
-            if hint == 'yes' or hint == 'y': #edited by Justine to simplify the input required to ask for a hint
-                self.hint_system.provide_hint()
+            if self.hint_system.hintlimitreached() is False: #added by Justine to check whether all hints have been used up. If they have, the program no longers asks if the player wants a hint.
+                hint = input("Would you like a hint? (y/n): ").strip().lower() #edited by Justine to simplify the input required to ask for a hint
+                if hint == 'yes' or hint == 'y': #edited by Justine to simplify the input required to ask for a hint
+                    self.hint_system.provide_hint()
 
             try:
                 row1, col1 = map(int, input("Enter the first card (row col): ").split())
@@ -175,6 +176,12 @@ class LimitedHints(Hint):
             print(f"Hints used: {self.hints_used}/{self.max_hints}")
         else:
             print("No more hints available.")
+
+    def hintlimitreached(self): #added by Justine to check whether all hints have been used up already.
+        if self.hints_used >= self.max_hints:
+            return True
+        else:
+            return False
 
 class Timer: #Anne added class Timer to keep track of how long a player takes to complete the game.
     def __init__(self):
