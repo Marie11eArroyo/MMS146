@@ -111,9 +111,9 @@ class MemoryGame:
             self.update_board()
             # Added by Kevin from adding HintySystem class.
             if self.hint_system.hintlimitreached() is False: #added by Justine to check whether all hints have been used up. If they have, the program no longer asks if the player wants a hint.
-		    hint = input("Would you like a hint? (y/n): ").strip().lower() #edited by Justine to simplify the input required to ask for a hint
-		    if hint == 'yes' or hint == 'y': #edited by Justine to simplify the input required to ask for a hint
-			    self.hint_system.provide_hint()
+		    	hint = input("Would you like a hint? (y/n): ").strip().lower() #edited by Justine to simplify the input required to ask for a hint
+		    	if hint == 'yes' or hint == 'y': #edited by Justine to simplify the input required to ask for a hint
+				self.hint_system.provide_hint()
 
             try:
                 row1, col1 = map(int, input("Enter the first card (row col): ").split())
