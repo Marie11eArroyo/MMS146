@@ -13,13 +13,16 @@ class Card:
     def __init__(self, symbol):
         self.symbol = symbol
         self.is_matched = False
+        self.is_shown = False #Added by Lanz. Used to temporarily reveal symbols.
 
     def reveal(self):
-        return self.symbol if self.is_matched else "*"
+        return self.symbol if self.is_matched or self.is_shown else "*"
     
-    def tempreveal(self): #edited by Justine. Renamed from hide(self) because it was unused anyway. Converted it to a second reveal method that just temporarily reveals the symbol of a card.
-        #return "*" if not self.is_matched else self.symbol
-        return self.symbol
+    def tempreveal(self): #edited by Lanz. Used to temporarily reveal symbols.
+    	self.is_shown = True
+
+    def temphide(self):
+        self.is_shown = False
 
 class GameBoard:
     def __init__(self, board_size=6):
@@ -39,9 +42,22 @@ class GameBoard:
                 board.append(row)
             return board
 
-    def display(self):                      #Added by Kevin. This is to show the current state of the board.
+    def display(self):#Added by Kevin, Modified by Lanz. This is to show the current state of the board.
+        i=0
+        j=0
         for row in self._grid_of_cards:
-            print(" ".join(card.reveal() for card in row))
+            j+=1
+        for card in row:
+            i+=1
+        for row,l in zip(self._grid_of_cards,range(i)):
+            print(' '.join(f'+{l+1},{k+1}+' for k in range(j)))
+            print(' '.join(f'| {card.reveal()} |' for card in row))
+            print(' '.join(f'+---+' for card in row))
+
+    def hide(self):
+        for row in self._grid_of_cards:
+            for card in row:
+                card.temphide()
 
 class MemoryGame:
     def __init__(self, player_name):
@@ -64,7 +80,7 @@ class MemoryGame:
             #Anne added an error message after ValueError.
         if (row, col) in self.flipped_rows_cols: #added by Justine. Now checks whether the selected card has already been flipped or not. If flipped, the move is considered invalid.
             raise ValueError("Please pick an unmatched card!")
-        print(f"Card at ({row}, {col}) : {card.tempreveal()}") #edited by Manuel. Switched it over to Justine's implementation.
+        card.tempreveal() #edited by Manuel. Switched it over to Justine's implementation.
         return card
 
     def check_match(self, first_card, second_card):
@@ -109,17 +125,23 @@ class MemoryGame:
         self.start_game() #Anne added this to begin counting time as player starts.
         while len(self.matched_pairs) < (self.game_board._board_size * self.game_board._board_size) // 2:
             self.update_board()
+            self.game_board.hide()
             # Added by Kevin from adding HintySystem class.
-            if self.hint_system.hintlimitreached() is False: #added by Justine to check whether all hints have been used up. If they have, the program no longer asks if the player wants a hint.
-                hint = input("Would you like a hint? (y/n): ").strip().lower() #edited by Justine to simplify the input required to ask for a hint
-                if hint == 'yes' or hint == 'y': #edited by Justine to simplify the input required to ask for a hint
-                    self.hint_system.provide_hint()
-
+            hint = input("Would you like a hint? (y/n): ").strip().lower() #edited by Justine to simplify the input required to ask for a hint
+            if hint == 'yes' or hint == 'y': #edited by Justine to simplify the input required to ask for a hint
+                self.hint_system.provide_hint()
+            os.system('cls')
+            print(f'Moves: {self.moves_counter}')
+            self.update_board()
             try:
                 row1, col1 = map(int, input("Enter the first card (row col): ").split())
                 first_card = self.flip_card(row1, col1)
+                os.system('cls')
+                print(f'Moves: {self.moves_counter}')
+                self.update_board()
                 row2, col2 = map(int, input("Enter the second card (row col): ").split())	
                 second_card = self.flip_card(row2, col2)
+                os.system('cls')
                 self.moves_counter +=1
                 if row1==row2 and col1==col2: #re-introduced by Justine. Prevents cases where a player picks the same card twice and causes it to match by itself.
                     print("You chose the same card twice! Try again.")
@@ -130,6 +152,7 @@ class MemoryGame:
                     self.flipped_rows_cols.append((row1, col1)) #added by Justine. Keeps track of row and column combinations that have already been matched successfully.
                     self.flipped_rows_cols.append((row2, col2)) #added by Justine. Keeps track of row and column combinations that have already been matched successfully.
             except (ValueError, IndexError):
+                os.system('cls')
                 print("Invalid input. Please enter valid row and column numbers.")
         self.end_game() #Anne added this to stop counting time as player starts.
 
