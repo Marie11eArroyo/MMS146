@@ -133,6 +133,16 @@ class MemoryGame:
                 print("Invalid input. Please enter valid row and column numbers.")
         self.end_game() #Anne added this to stop counting time as player starts.
 
+    def restart_game (self): 
+        self.timer.stop()
+        restart = input ("start new game? (yes/no): ")
+        if restart == 'yes':
+            self.game_board._setup_board()
+            self.start_game()
+            print ("Game has restarted.")
+        elif restart == 'no':
+            self.timer.elapsed()
+
 
 class Hint:      #Added by Kevin. 
     def __init__(self, game_board):
