@@ -18,7 +18,7 @@ class Card:
     def reveal(self):
         return self.symbol if self.is_matched or self.is_shown else "*"
     
-    def tempreveal(self): #edited by Lanz. Used to temporarily reveal symbols.
+    def tempreveal(self): #Renamed from hide(self) by Justine. Edited by Lanz. Used to temporarily reveal symbols.
     	self.is_shown = True
 
     def temphide(self):
@@ -126,13 +126,16 @@ class MemoryGame:
         while len(self.matched_pairs) < (self.game_board._board_size * self.game_board._board_size) // 2:
             self.update_board()
             self.game_board.hide()
-            # Added by Kevin from adding HintySystem class.
-            hint = input("Would you like a hint? (y/n): ").strip().lower() #edited by Justine to simplify the input required to ask for a hint
-            if hint == 'yes' or hint == 'y': #edited by Justine to simplify the input required to ask for a hint
-                self.hint_system.provide_hint()
-            os.system('cls')
-            print(f'Moves: {self.moves_counter}')
-            self.update_board()
+
+            if self.hint_system.hintlimitreached() is False: #added by Justine to check whether all hints have been used up. If they have, the program no longer asks if the player wants a hint.
+                # Added by Kevin from adding HintySystem class.
+                hint = input("Would you like a hint? (y/n): ").strip().lower() #edited by Justine to simplify the input required to ask for a hint
+                if hint == 'yes' or hint == 'y': #edited by Justine to simplify the input required to ask for a hint
+                    self.hint_system.provide_hint()
+                os.system('cls')
+                print(f'Moves: {self.moves_counter}')
+                self.update_board()
+
             try:
                 row1, col1 = map(int, input("Enter the first card (row col): ").split())
                 first_card = self.flip_card(row1, col1)
