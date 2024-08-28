@@ -238,14 +238,14 @@ class Timer: #Anne added class Timer to keep track of how long a player takes to
 def PlayGame(): # Start the game, Modified by Manuel
     player_name = input("Enter your name: ")
     game = MemoryGame(player_name)
-    game.play()
-    if input("Play again? Yes/No\n") == "No":
-        loopActive = False
+    '''game.play()'''
+
 
 # Creates a loop for repetative gameplay, by Manuel
-loopActive = True 
 if __name__ == "__main__":
-    if loopActive == True:
+    loopActive = True
+
+    while loopActive == True:
         PlayGame()
-    else:
-        exit()
+        if input("Play again? Yes/No\n") == "No":
+            loopActive = False
