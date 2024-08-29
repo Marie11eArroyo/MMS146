@@ -240,6 +240,17 @@ def PlayGame(): # Start the game, Modified by Manuel
     game = MemoryGame(player_name)
     game.play()
 
+    def restart_game (self): 
+        self.timer.stop()
+        restart = input ("start new game? (yes/no): ")
+        if restart == 'yes':
+            self.game_board._setup_board()
+            self.play()
+            print ("Game has restarted.")
+        elif restart == 'no':
+            self.timer.elapsed()
+
+
 # Creates a loop for repetative gameplay, by Manuel
 if __name__ == "__main__":
     loopActive = True
